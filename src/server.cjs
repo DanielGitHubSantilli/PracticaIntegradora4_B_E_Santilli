@@ -1,5 +1,6 @@
 import express from 'express';
 import dotenv from 'dotenv';
+import {config} from 'dotenv'
 dotenv.config(); 
 
 import handlebars from 'express-handlebars';
@@ -8,7 +9,6 @@ import {
       Server
 } from 'socket.io';
 import cookieParser from 'cookie-parser';
-import CONFIG from './config/environment/config.js';
 import __dirname from './__dirname.js';
 import {
       MongoManager
@@ -21,8 +21,8 @@ import router from './routes/app.routes.js';
 
 const app = express();
 
-const PORT = CONFIG.PORT;
-const SECRET = CONFIG.SECRET;
+const PORT = process.env.PORT || config.PORT;
+const SECRET = process.env.SECRET || config.SECRET;
 
 MongoManager.start();
 
@@ -33,8 +33,8 @@ const httpServer = app.listen(PORT, () => {
 export const io = new Server(httpServer);
 
 if (process.env.NODE_ENV !== 'production') {
-  
-  import ('dotenv').config();
+  require('dotenv').config();
+  // import ('dotenv').config();
 }
 
 app.use(cookieParser());
