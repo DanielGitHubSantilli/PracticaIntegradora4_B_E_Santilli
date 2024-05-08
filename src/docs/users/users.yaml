@@ -1,0 +1,210 @@
+
+openapi: 3.0.0
+info:
+  version: 0.9.0
+  title: Users API
+  description: API para el manejo de usuarios.
+
+paths:
+  /api/users/:
+    get:
+      summary: Obtener todos los usuarios.
+      security:
+        - CookieAuth: []
+      responses:
+        200:
+          description: Listado de usuarios.
+        401:
+          description: No está autorizado.
+
+  /api/users/login:
+    post:
+      summary: Iniciar sesión como usuario.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        200:
+          description: Usuario ha iniciado sesión correctamente.
+        401:
+          description: Credenciales incorrectas.
+  
+  /api/users/login/admin:
+    post:
+      summary: Iniciar sesión como administrador.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        200:
+          description: Administrador ha iniciado sesión correctamente.
+        401:
+          description: Credenciales incorrectas o el usuario no es un administrador.
+          
+  /api/users/register:
+    post:
+      summary: Registrar un nuevo usuario.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                first_name:
+                  type: string
+                last_name:
+                  type: string
+                email:
+                  type: string
+                age:
+                  type: integer
+                password:
+                  type: string
+                confirm_password: 
+                  type: string
+      responses:
+        201:
+          description: Usuario registrado correctamente.
+        400:
+          description: Error en los datos proporcionados.
+  
+  /api/users/logout:
+    post:
+      summary: Cerrar sesión del usuario.
+      security:
+        - CookieAuth: []
+      responses:
+        200:
+          description: Sesión cerrada correctamente.
+
+  /api/users/{uid}/documents:
+    post:
+      summary: Sube uno o múltiples documentos para un usuario.
+      description: Permite a un usuario subir documentos que serán almacenados y asociados a su perfil.
+      parameters:
+        - in: path
+          name: uid
+          required: true
+          description: ID único del usuario.
+          schema:
+            type: string
+      requestBody:
+        description: Datos del documento a subir.
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                documents:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+      responses:
+        200:
+          description: Documentos subidos correctamente.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        400:
+          description: Error en la solicitud.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+  /api/users/premium/{id}:
+    put:
+      summary: Actualizar rol del usuario.
+      security:
+        - CookieAuth: []
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: false
+          description: ID del usuario.
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+      responses:
+        200:
+          description: Rol del usuario actualizado correctamente.
+        400:
+          description: Error en los datos proporcionados.
+        401:
+          description: No está autorizado.
+        404:
+          description: No se ha encontrado el usuario.
+
+  /api/users/update:
+    put:
+      summary: Actualizar información del usuario.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                first_name:
+                  type: string
+                last_name:
+                  type: string
+                email:
+                  type: string
+                age:
+                  type: integer
+      responses:
+        200:
+          description: Información del usuario actualizada correctamente.
+        400:
+          description: Error en los datos proporcionados.
+
+  /api/users/delete:
+    delete:
+      summary: Eliminar cuenta de usuario.
+      responses:
+        200:
+          description: Usuario eliminado correctamente.
+        400:
+          description: Error al intentar eliminar el usuario.
+
+components:
+  securitySchemes:
+    CookieAuth:
+      type: apiKey
+      in: cookie
+      name: auth

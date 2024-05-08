@@ -1,0 +1,171 @@
+
+openapi: 3.0.0
+info:
+  version: 0.9.0
+  title: Products API
+  description: API para el manejo de productos.
+
+paths:
+  /api/products:
+    get:
+      summary: Obtener todos los productos
+      parameters:
+        - in: query
+          name: limit
+          schema:
+            type: integer
+          description: Limite de productos a retornar.
+        - in: query
+          name: page
+          schema:
+            type: integer
+          description: Número de página.
+        - in: query
+          name: sort
+          schema:
+            type: string
+          description: .
+        - in: query
+          name: query
+          schema:
+            type: string
+          description: Query de búsqueda.
+      responses:
+        200:
+          description: Listado de productos.
+
+        401:
+          description: No está autorizado.
+
+    post:
+      summary: Añadir un nuevo producto.
+      security:
+        - CookieAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+                code:
+                  type: string
+                price:
+                  type: number
+                status:
+                  type: string
+                stock:
+                  type: integer
+                category:
+                  type: string
+                thumbnails:
+                  type: array
+                  items:
+                    type: string
+                id:
+                  type: string
+      responses:
+        200:
+          description: Producto agregado correctamente.
+
+        401:
+          description: No está autorizado.
+
+
+  /api/products/{id}:
+    get:
+      summary: Obtener un producto por ID
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: ID del producto.
+      responses:
+        200:
+          description: Detalles del producto.
+
+        401:
+          description: No está autorizado.
+
+        500:
+          description: No se ha encontrado el producto.
+    put:
+      summary: Actualizar un producto por ID
+      security:
+        - CookieAuth: []
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: ID del producto.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+                code:
+                  type: string
+                price:
+                  type: number
+                status:
+                  type: string
+                stock:
+                  type: integer
+                category:
+                  type: string
+                thumbnails:
+                  type: array
+                  items:
+                    type: string
+                id:
+                  type: string
+      responses:
+        200:
+          description: Producto actualizado correctamente.
+        
+        401:
+          description: No está autorizado.
+
+        404:
+          description: No se ha encontrado.
+    delete:
+      summary: Eliminar un producto por ID
+      security:
+        - CookieAuth: []
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: ID del producto.
+      responses:
+        200:
+          description: Producto eliminado correctamente.
+
+        401:
+          description: No está autorizado.
+
+        404:
+          description: No se ha encontrado.
+
+components:
+  securitySchemes:
+    CookieAuth:                 
+      type: apiKey
+      in: cookie                
+      name: auth 
